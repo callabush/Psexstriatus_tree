@@ -44,7 +44,8 @@ set.seed(567890)
 #  install.packages("remotes")
 #}
 #remotes::install_github("thomas-neitmann/mdthemes", upgrade = "never")
-pacman::p_load(tidyverse, ggtree, ggtext, mdthemes, install = FALSE)
+pacman::p_load(tidyverse, ggtree, ggtext, mdthemes,phyloseq, phytools,
+               install = FALSE)
 ```
 
 ## Load Tree
@@ -52,7 +53,7 @@ pacman::p_load(tidyverse, ggtree, ggtext, mdthemes, install = FALSE)
 ```{r load-tree}
 # Tree is RAxML in newick format
 tree <- 
-  read.tree("data/ASV_clones_bigOutgroup_Alignment_RAxML_Tree_20240405.newick")
+  read.tree("data/2024_4_12_rooted.newick")
 tree
 ```
 
@@ -62,14 +63,11 @@ tree
 # build a ggplot with a geom_tree
 tree_df <-
   ggplot(tree) + geom_tree() + theme_tree()
-
+tree_df
 # add a scale
 tree_scale_df <-
   ggtree(tree) + geom_treescale()
-
-# or add the entire scale to the x axis with theme_tree2()
-tree_longScale_df <-
-  ggtree(tree) + theme_tree2()
+tree_scale_df
 
 # add node points
 tree_scale_df + geom_nodepoint()
@@ -78,7 +76,7 @@ tree_scale_df + geom_nodepoint()
 tree_scale_df + geom_tippoint()
 
 # Label the tips
-tree_scale_df + geom_tiplab()
+tree_scale_df + geom_tiplab(size = 2)
 
 # Add title
 tree_scale_df +
@@ -86,9 +84,32 @@ tree_scale_df +
   theme(title = ggtext::element_markdown())
 
 # Add node numbers
-tree_scale_df + geom_text(aes(label=node), hjust=-.3)
+tree_scale_df + geom_text(aes(label = node), hjust = 0.5, vjust = -0.3,
+                          size = 2)
+
+# Collapse tree
+collapse_239 <- tree_scale_df %>% collapse(node=239) + 
+  geom_point2(aes(subset=(node==239)), shape=21, size=2, fill='green')
+collapse_239
+
+collapse_239 +  geom_text(aes(label = node), hjust = 0.5, vjust = -0.3,
+                          size = 2)
+collapse_239 + geom_tiplab(size = 2)
+
+collapse_114 <-
+  collapse_239 %>% collapse(node=114) + 
+  geom_point2(aes(subset=(node==114)), shape=21, size=2, fill='green')
+
+collapse_266 <-
+  collapse_114 %>% collapse(node=266) + 
+  geom_point2(aes(subset=(node==266)), shape=21, size=2, fill='green')
+
+collapse_266 %>% collapse(node=263) + 
+  geom_point2(aes(subset=(node==263)), shape=21, size=2, fill='green')
+
 ```
 
-
+## Help page 
+ https://yulab-smu.top/treedata-book/chapter6.html
 
 
