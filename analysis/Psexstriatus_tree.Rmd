@@ -55,15 +55,19 @@ pacman::p_load(tidyverse, ggtree, ggtext, mdthemes,phyloseq, phytools,
 tree <- 
   read.tree("data/2024_4_12_rooted.newick")
 tree
+
+# Is the tree rooted?
+is.rooted(tree)
+
 ```
 
 # View tree
 
 ```{r view-tree}
 # build a ggplot with a geom_tree
-tree_df <-
+tree_plot <-
   ggplot(tree) + geom_tree() + theme_tree()
-tree_df
+
 # add a scale
 tree_scale_df <-
   ggtree(tree) + geom_treescale()
@@ -78,34 +82,69 @@ tree_scale_df + geom_tippoint()
 # Label the tips
 tree_scale_df + geom_tiplab(size = 2)
 
-# Add title
-tree_scale_df +
-  labs(title = "*P. sexstriatus* ASV and Clone Tree") +
-  theme(title = ggtext::element_markdown())
-
 # Add node numbers
 tree_scale_df + geom_text(aes(label = node), hjust = 0.5, vjust = -0.3,
                           size = 2)
 
-# Collapse tree
-collapse_239 <- tree_scale_df %>% collapse(node=239) + 
-  geom_point2(aes(subset=(node==239)), shape=21, size=2, fill='green')
-collapse_239
-
-collapse_239 +  geom_text(aes(label = node), hjust = 0.5, vjust = -0.3,
+viewClade(node = 281)+geom_tiplab(size = 3) + geom_text(aes(label = node),
+                                                        hjust = 0.5, vjust = -0.3,
                           size = 2)
-collapse_239 + geom_tiplab(size = 2)
 
-collapse_114 <-
-  collapse_239 %>% collapse(node=114) + 
-  geom_point2(aes(subset=(node==114)), shape=21, size=2, fill='green')
+# Collapse tree
+# Node 102 is NR_028897.1_Desulfobacteria
+# Node 103 is Desulfobacterium_indolicum_NR_028897
+## Node 256 joins 102 and 103 : Desulfobacteria
+# Node 104 is ASV_107
+# Node 105 is A2A6_fullLength
+# Node 107 is ASV_122
+# Node 106 is ASV_100
+# Node 108 is NR_117108.1_Desulfobotulus_sapovorans_DSM2055
+# Node 109 is ASV_104
+# Node 110 is AG1_fullLength
+# Node 111 is Desulfobacter_vibrioformis_NR_029177
+# Node 112 is NR_074955.1_Desulfobaccia
+# Node 113 is NR_028662.1_Desulfobaccia
+## Node 263 joins 112 and 113
+# Node 150 is Gammaproteobacteria
+# Node 159 and 164 are Desulfovibrionia
+# Node 239 is Desulfuromonadia
+# Node 224 is Desulfarculia
+# Node 281 is Thermosulfobacteria
 
-collapse_266 <-
-  collapse_114 %>% collapse(node=266) + 
-  geom_point2(aes(subset=(node==266)), shape=21, size=2, fill='green')
 
-collapse_266 %>% collapse(node=263) + 
-  geom_point2(aes(subset=(node==263)), shape=21, size=2, fill='green')
+collapse(tree_scale_df, 150, 'mixed', fill="darkgreen") %>%
+  collapse(239, "mixed", fill="darkgreen") %>%
+  collapse(224, "mixed", fill="darkgreen") %>%
+  collapse(159, "mixed", fill="darkgreen") %>%
+  collapse(164, "mixed", fill="darkgreen") %>%
+  collapse(256, "mixed", fill="darkgreen") %>%
+  collapse(263, "mixed", fill="darkgreen")  %>%
+  collapse(281, "mixed", fill="darkgreen") +
+  geom_cladelabel(node = 150, label = "Gammaproteobacteria",
+                  offset = 0.3, fontsize = 2)  +
+  geom_cladelabel(node = 239, label = "Desulfuromonadia",
+                  offset = 0.2, fontsize = 2) +
+  geom_cladelabel(node = 224, label = "Desulfarculia",
+                  offset = 0.25, fontsize = 2) +
+  geom_cladelabel(node = 159, label = "Desulfovibrionia",
+                  offset = 0.3, fontsize = 2) +
+  geom_cladelabel(node = 164, label = "Desulfovibrionia",
+                  offset = 0.2, fontsize = 2) +
+  geom_point2(aes(subset=(node==256)), shape=21, size=1, fill='darkgreen') +
+  geom_cladelabel(node = 256, label = "Desulfobacteria",
+                  offset = 0.01, fontsize = 2) +
+  geom_point2(aes(subset=(node==263)), shape=21, size=1, fill='darkgreen') +
+  geom_cladelabel(node = 263, label = "Desulfobaccia",
+                  offset = 0.01, fontsize = 2) +
+  geom_cladelabel(node = 281, label = "Thermosulfobacteria",
+                  offset = 0.2, fontsize = 2) +
+  geom_cladelabel(node = 132, label = "Dissulfurbacteria",
+                  offset = 0.01, fontsize = 2)
+  
+  
+
+
+
 
 ```
 
